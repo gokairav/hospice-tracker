@@ -1,29 +1,34 @@
 import { useAuth } from '../context/AuthContext'
 import Header from '../components/Header'
+import { useAllLeadsData } from '../hooks/useAllLeadsData'
+import AdminOverview from './admin/AdminOverview'
 
 export default function AdminDashboard() {
   const { profile, signOut } = useAuth()
+  const { leads, profiles, loading, error } = useAllLeadsData()
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 pb-10">
       <Header
         right={
-          <button
-            onClick={signOut}
-            className="text-sm font-medium text-slate-500 active:text-slate-700"
-          >
+          <button onClick={signOut} className="text-sm font-medium text-slate-500 active:text-slate-700">
             Sign out
           </button>
         }
       />
-      <div className="px-4 py-6">
-        <h1 className="text-lg font-semibold text-slate-900 mb-1">
-          Hi, {profile?.full_name ?? 'there'}
-        </h1>
-        <p className="text-sm text-slate-500 mb-6">Admin dashboard</p>
-        <p className="text-sm text-slate-500">
-          The full admin dashboard (aggregate stats, breakdowns, all-leads view) is coming in Step 7.
-        </p>
+      <div className="px-4 py-4">
+        <h1 className="text-lg font-semibold text-slate-900 mb-1">Hi, {profile?.full_name ?? 'there'}</h1>
+        <p className="text-sm text-slate-500 mb-4">Admin dashboard</p>
+
+        {loading ? (
+          <div className="flex items-center justify-center py-24">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-slate-600" />
+          </div>
+        ) : error ? (
+          <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{error}</div>
+        ) : (
+          <AdminOverview leads={leads} profiles={profiles} />
+        )}
       </div>
     </div>
   )
