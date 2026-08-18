@@ -5,7 +5,7 @@ import Login from './pages/Login'
 import MarketerLayout from './pages/marketer/MarketerLayout'
 import MarketerLeads from './pages/marketer/MarketerLeads'
 import LeadDetail from './pages/marketer/LeadDetail'
-import AddLeadPlaceholder from './pages/marketer/AddLeadPlaceholder'
+import AddLead from './pages/marketer/AddLead'
 import FollowUpsPlaceholder from './pages/marketer/FollowUpsPlaceholder'
 import MarketerStats from './pages/marketer/MarketerStats'
 import Profile from './pages/marketer/Profile'
@@ -69,7 +69,7 @@ export default function App() {
         }
       >
         <Route index element={<MarketerLeads />} />
-        <Route path="leads/new" element={<AddLeadPlaceholder />} />
+        <Route path="leads/new" element={<AddLead />} />
         <Route path="leads/:id" element={<LeadDetail />} />
         <Route path="follow-ups" element={<FollowUpsPlaceholder />} />
         <Route path="stats" element={<MarketerStats />} />

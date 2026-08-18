@@ -14,6 +14,8 @@ export const ACTIVE_STATUSES = ['new_lead', 'eval_scheduled', 'not_ready']
 
 export const BENEFIT_PERIODS = ['BP1', 'BP2', 'BP3', 'BP4', 'BP5+']
 
+export const LOCATION_TYPES = ['Home', 'ALF', 'Residential Care Home', 'SNF', 'Other']
+
 export const CALL_LOG_TYPES = [
   { value: 'call', label: 'Call' },
   { value: 'visit', label: 'Visit' },
