@@ -2,7 +2,13 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { useAuth } from './context/AuthContext'
 import SplashScreen from './components/SplashScreen'
 import Login from './pages/Login'
-import MarketerDashboard from './pages/MarketerDashboard'
+import MarketerLayout from './pages/marketer/MarketerLayout'
+import MarketerLeads from './pages/marketer/MarketerLeads'
+import LeadDetail from './pages/marketer/LeadDetail'
+import AddLeadPlaceholder from './pages/marketer/AddLeadPlaceholder'
+import FollowUpsPlaceholder from './pages/marketer/FollowUpsPlaceholder'
+import MarketerStats from './pages/marketer/MarketerStats'
+import Profile from './pages/marketer/Profile'
 import AdminDashboard from './pages/AdminDashboard'
 import OwnerDashboard from './pages/OwnerDashboard'
 
@@ -58,10 +64,17 @@ export default function App() {
         path="/marketer"
         element={
           <RequireRole allowedRoles={['marketer']}>
-            <MarketerDashboard />
+            <MarketerLayout />
           </RequireRole>
         }
-      />
+      >
+        <Route index element={<MarketerLeads />} />
+        <Route path="leads/new" element={<AddLeadPlaceholder />} />
+        <Route path="leads/:id" element={<LeadDetail />} />
+        <Route path="follow-ups" element={<FollowUpsPlaceholder />} />
+        <Route path="stats" element={<MarketerStats />} />
+        <Route path="profile" element={<Profile />} />
+      </Route>
       <Route
         path="/admin"
         element={
