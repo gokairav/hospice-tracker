@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import Spinner from '../components/Spinner'
+import logo from '../assets/logo.png'
 
 export default function Login() {
   const { signIn } = useAuth()
@@ -23,8 +24,11 @@ export default function Login() {
     setSubmitting(false)
 
     if (signInError) {
-      if (signInError.message.toLowerCase().includes('invalid login credentials')) {
+      const message = signInError.message.toLowerCase()
+      if (message.includes('invalid login credentials')) {
         setError('Incorrect email or password. Please try again.')
+      } else if (message.includes('fetch') || message.includes('network')) {
+        setError('Could not reach the server. Please check your connection and try again.')
       } else {
         setError(signInError.message)
       }
@@ -35,10 +39,7 @@ export default function Login() {
     <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-sm">
         <div className="flex justify-center mb-8">
-          {/* Logo will be placed here, ~180px wide, once the logo file is provided */}
-          <div className="w-[180px] h-[70px] flex items-center justify-center rounded-lg bg-slate-100 text-slate-400 text-xs text-center px-2">
-            Expert Hospice CRM
-          </div>
+          <img src={logo} alt="Expert Hospice CRM" className="w-[180px] h-auto" />
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
