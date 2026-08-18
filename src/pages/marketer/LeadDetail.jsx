@@ -1,13 +1,20 @@
 import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import { supabase } from '../../lib/supabaseClient'
 import StatusBadge from '../../components/StatusBadge'
 import RequestReviewButton from '../../components/RequestReviewButton'
+import StatusEditor from './StatusEditor'
+import ReminderForm from './ReminderForm'
+import CallLogSection from './CallLogSection'
 import { calculateAge } from '../../lib/leadConstants'
 
 export default function LeadDetail() {
   const { id } = useParams()
+  const { user } = useAuth()
   const [lead, setLead] = useState(null)
+  const [rejectionReasons, setRejectionReasons] = useState([])
+  const [callLogs, setCallLogs] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -16,10 +23,25 @@ export default function LeadDetail() {
 
     async function load() {
       setLoading(true)
-      const { data, error } = await supabase.from('leads').select('*').eq('id', id).single()
+      setError('')
+
+      const [leadResult, reasonsResult, logsResult] = await Promise.all([
+        supabase.from('leads').select('*').eq('id', id).single(),
+        supabase.from('rejection_reasons').select('*').order('id'),
+        supabase.from('call_logs').select('*').eq('lead_id', id).order('log_date', { ascending: false }),
+      ])
+
       if (!isMounted) return
-      if (error) setError(error.message)
-      else setLead(data)
+
+      if (leadResult.error) {
+        setError(leadResult.error.message)
+      } else {
+        setLead(leadResult.data)
+      }
+
+      if (!reasonsResult.error) setRejectionReasons(reasonsResult.data)
+      if (!logsResult.error) setCallLogs(logsResult.data)
+
       setLoading(false)
     }
 
@@ -76,7 +98,21 @@ export default function LeadDetail() {
         <Field label="Referring contact" value={lead.referring_contact_name} />
         <Field label="Referring contact phone" value={lead.referring_contact_phone} />
         <Field label="Referral date" value={lead.referral_date} />
+        {lead.status === 'admitted' && <Field label="Admission date" value={lead.admitted_date} />}
+        {lead.status === 'admitted' && <Field label="Benefit period" value={lead.benefit_period} />}
+        {(lead.status === 'rejected' || lead.status === 'patient_declined') && (
+          <>
+            <Field label="Rejection reason" value={lead.rejection_reason} />
+            <Field label="Rejection notes" value={lead.rejection_notes} />
+          </>
+        )}
         <Field label="Notes" value={lead.notes} />
+      </div>
+
+      <StatusEditor lead={lead} rejectionReasons={rejectionReasons} onUpdated={setLead} />
+
+      <div className="mt-4">
+        <ReminderForm leadId={lead.id} marketerId={user.id} />
       </div>
 
       {(lead.referring_contact_name || lead.referring_contact_phone) && (
@@ -88,9 +124,12 @@ export default function LeadDetail() {
         </div>
       )}
 
-      <p className="mt-6 text-xs text-slate-400 text-center">
-        Status updates, follow-up reminders, and call/visit logging are coming in Step 4.
-      </p>
+      <CallLogSection
+        leadId={lead.id}
+        marketerId={user.id}
+        logs={callLogs}
+        onLogAdded={(log) => setCallLogs((prev) => [log, ...prev])}
+      />
     </div>
   )
 }

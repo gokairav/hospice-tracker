@@ -1,6 +1,4 @@
-// TODO: swap for the direct "write a review" deep link once we have the
-// Google Business Profile Place ID (https://search.google.com/local/writereview?placeid=...)
-export const GOOGLE_REVIEW_URL = 'https://www.google.com/search?q=Expert+Hospice+Care'
+export const GOOGLE_REVIEW_URL = 'https://g.page/r/CRKGC8ahTOILEBM/review'
 
 export function buildReviewMessage(contactName) {
   const greeting = contactName ? `Hi ${contactName},` : 'Hi,'

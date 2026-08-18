@@ -12,6 +12,15 @@ export const LEAD_STATUSES = [
 // Statuses that count as a lead still being actively worked
 export const ACTIVE_STATUSES = ['new_lead', 'eval_scheduled', 'not_ready']
 
+export const BENEFIT_PERIODS = ['BP1', 'BP2', 'BP3', 'BP4', 'BP5+']
+
+export const CALL_LOG_TYPES = [
+  { value: 'call', label: 'Call' },
+  { value: 'visit', label: 'Visit' },
+  { value: 'email', label: 'Email' },
+  { value: 'other', label: 'Other' },
+]
+
 export function getStatusMeta(status) {
   return LEAD_STATUSES.find((s) => s.value === status) ?? { value: status, label: status, color: 'gray' }
 }
