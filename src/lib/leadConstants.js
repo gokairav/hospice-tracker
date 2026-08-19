@@ -45,3 +45,18 @@ export function isAdmittedThisMonth(lead) {
   const now = new Date()
   return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
 }
+
+// Shared by the add-lead form and the in-place lead editor
+export function validateLeadCoreFields(form) {
+  const errors = {}
+  if (!form.patient_first_name.trim()) errors.patient_first_name = 'First name is required.'
+  if (!form.patient_last_name.trim()) errors.patient_last_name = 'Last name is required.'
+  if (!form.patient_dob) errors.patient_dob = 'Date of birth is required.'
+  if (!form.primary_diagnosis.trim()) errors.primary_diagnosis = 'Primary diagnosis is required.'
+  if (!form.location_name.trim()) errors.location_name = 'Location name is required.'
+  if (!form.location_type) errors.location_type = 'Location type is required.'
+  if (!form.referral_source_name.trim()) errors.referral_source_name = 'Referral source name is required.'
+  if (!form.referral_source_type) errors.referral_source_type = 'Referral source type is required.'
+  if (!form.referral_date) errors.referral_date = 'Referral date is required.'
+  return errors
+}

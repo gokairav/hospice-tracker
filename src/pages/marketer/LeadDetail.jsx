@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext'
 import { supabase } from '../../lib/supabaseClient'
 import StatusBadge from '../../components/StatusBadge'
 import RequestReviewButton from '../../components/RequestReviewButton'
+import LeadCoreFieldsEditor from '../../components/LeadCoreFieldsEditor'
 import StatusEditor from './StatusEditor'
 import ReminderForm from './ReminderForm'
 import CallLogSection from './CallLogSection'
@@ -88,26 +89,22 @@ export default function LeadDetail() {
         <StatusBadge status={lead.status} />
       </div>
 
-      <div className="mt-4 bg-white rounded-xl border border-slate-200 divide-y divide-slate-100">
-        <Field label="Primary diagnosis" value={lead.primary_diagnosis} />
-        <Field label="Secondary diagnoses" value={lead.secondary_diagnoses} />
-        <Field label="Location" value={lead.location_name} />
-        <Field label="Location type" value={lead.location_type} />
-        <Field label="Referral source" value={lead.referral_source_name} />
-        <Field label="Referral source type" value={lead.referral_source_type} />
-        <Field label="Referring contact" value={lead.referring_contact_name} />
-        <Field label="Referring contact phone" value={lead.referring_contact_phone} />
-        <Field label="Referral date" value={lead.referral_date} />
-        {lead.status === 'admitted' && <Field label="Admission date" value={lead.admitted_date} />}
-        {lead.status === 'admitted' && <Field label="Benefit period" value={lead.benefit_period} />}
-        {(lead.status === 'rejected' || lead.status === 'patient_declined') && (
-          <>
-            <Field label="Rejection reason" value={lead.rejection_reason} />
-            <Field label="Rejection notes" value={lead.rejection_notes} />
-          </>
-        )}
-        <Field label="Notes" value={lead.notes} />
-      </div>
+      {(lead.status === 'admitted' ||
+        lead.status === 'rejected' ||
+        lead.status === 'patient_declined') && (
+        <div className="mt-4 bg-white rounded-xl border border-slate-200 divide-y divide-slate-100">
+          {lead.status === 'admitted' && <Field label="Admission date" value={lead.admitted_date} />}
+          {lead.status === 'admitted' && <Field label="Benefit period" value={lead.benefit_period} />}
+          {(lead.status === 'rejected' || lead.status === 'patient_declined') && (
+            <>
+              <Field label="Rejection reason" value={lead.rejection_reason} />
+              <Field label="Rejection notes" value={lead.rejection_notes} />
+            </>
+          )}
+        </div>
+      )}
+
+      <LeadCoreFieldsEditor lead={lead} canReassign={false} onUpdated={setLead} />
 
       <StatusEditor lead={lead} rejectionReasons={rejectionReasons} onUpdated={setLead} />
 

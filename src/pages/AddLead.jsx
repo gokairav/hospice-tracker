@@ -1,8 +1,9 @@
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabaseClient'
-import { LOCATION_TYPES } from '../lib/leadConstants'
+import { LOCATION_TYPES, validateLeadCoreFields } from '../lib/leadConstants'
+import { TextField, SelectField, TextAreaField } from '../components/FormFields'
 
 const initialForm = {
   patient_first_name: '',
@@ -74,17 +75,8 @@ export default function AddLead() {
   }
 
   function validate() {
-    const newErrors = {}
+    const newErrors = validateLeadCoreFields(form)
     if (canAssign && !assignedTo) newErrors.assignedTo = 'Please assign this lead to a marketer or Other.'
-    if (!form.patient_first_name.trim()) newErrors.patient_first_name = 'First name is required.'
-    if (!form.patient_last_name.trim()) newErrors.patient_last_name = 'Last name is required.'
-    if (!form.patient_dob) newErrors.patient_dob = 'Date of birth is required.'
-    if (!form.primary_diagnosis.trim()) newErrors.primary_diagnosis = 'Primary diagnosis is required.'
-    if (!form.location_name.trim()) newErrors.location_name = 'Location name is required.'
-    if (!form.location_type) newErrors.location_type = 'Location type is required.'
-    if (!form.referral_source_name.trim()) newErrors.referral_source_name = 'Referral source name is required.'
-    if (!form.referral_source_type) newErrors.referral_source_type = 'Referral source type is required.'
-    if (!form.referral_date) newErrors.referral_date = 'Referral date is required.'
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
@@ -256,68 +248,6 @@ export default function AddLead() {
           {saving ? 'Saving…' : 'Add lead'}
         </button>
       </form>
-    </div>
-  )
-}
-
-function TextField({ label, value, onChange, error, optional, type = 'text' }) {
-  const id = useId()
-  return (
-    <div>
-      <label htmlFor={id} className="block text-sm font-medium text-slate-700 mb-1">
-        {label} {optional && <span className="text-slate-400 font-normal">(optional)</span>}
-      </label>
-      <input
-        id={id}
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
-      />
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-    </div>
-  )
-}
-
-function SelectField({ label, value, onChange, error, options }) {
-  const id = useId()
-  return (
-    <div>
-      <label htmlFor={id} className="block text-sm font-medium text-slate-700 mb-1">
-        {label}
-      </label>
-      <select
-        id={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
-      >
-        <option value="">Select…</option>
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-    </div>
-  )
-}
-
-function TextAreaField({ label, value, onChange, optional }) {
-  const id = useId()
-  return (
-    <div>
-      <label htmlFor={id} className="block text-sm font-medium text-slate-700 mb-1">
-        {label} {optional && <span className="text-slate-400 font-normal">(optional)</span>}
-      </label>
-      <textarea
-        id={id}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        rows={3}
-        className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
-      />
     </div>
   )
 }

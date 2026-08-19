@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext'
 import StatCard from '../../components/StatCard'
 import StatusBadge from '../../components/StatusBadge'
 import BreakdownList from '../../components/BreakdownList'
@@ -6,6 +8,8 @@ import { countBy } from '../../lib/adminStats'
 import { ACTIVE_STATUSES, LEAD_STATUSES, isAdmittedThisMonth } from '../../lib/leadConstants'
 
 export default function AdminOverview({ leads, profiles }) {
+  const { role } = useAuth()
+  const leadPathPrefix = role === 'owner' ? '/owner' : '/admin'
   const profileNameById = Object.fromEntries(profiles.map((p) => [p.id, p.full_name]))
 
   const activeLeadsCount = leads.filter((l) => ACTIVE_STATUSES.includes(l.status)).length
@@ -48,18 +52,23 @@ export default function AdminOverview({ leads, profiles }) {
         ) : (
           <ul className="space-y-2">
             {leads.map((lead) => (
-              <li key={lead.id} className="bg-white rounded-lg border border-slate-200 p-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <p className="font-medium text-slate-900 truncate">
-                      {lead.patient_first_name} {lead.patient_last_name}
-                    </p>
-                    <p className="text-xs text-slate-400 truncate mt-0.5">
-                      {lead.marketer_id ? (profileNameById[lead.marketer_id] ?? 'Unknown marketer') : 'Other'}
-                    </p>
+              <li key={lead.id}>
+                <Link
+                  to={`${leadPathPrefix}/leads/${lead.id}`}
+                  className="block bg-white rounded-lg border border-slate-200 p-3 active:bg-slate-50"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="font-medium text-slate-900 truncate">
+                        {lead.patient_first_name} {lead.patient_last_name}
+                      </p>
+                      <p className="text-xs text-slate-400 truncate mt-0.5">
+                        {lead.marketer_id ? (profileNameById[lead.marketer_id] ?? 'Unknown marketer') : 'Other'}
+                      </p>
+                    </div>
+                    <StatusBadge status={lead.status} />
                   </div>
-                  <StatusBadge status={lead.status} />
-                </div>
+                </Link>
               </li>
             ))}
           </ul>

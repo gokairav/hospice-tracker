@@ -11,6 +11,7 @@ import MarketerStats from './pages/marketer/MarketerStats'
 import Profile from './pages/marketer/Profile'
 import AdminDashboard from './pages/AdminDashboard'
 import OwnerDashboard from './pages/OwnerDashboard'
+import AdminLeadDetail from './pages/AdminLeadDetail'
 
 function dashboardPathForRole(role) {
   if (role === 'owner') return '/owner'
@@ -92,6 +93,14 @@ export default function App() {
         }
       />
       <Route
+        path="/admin/leads/:id"
+        element={
+          <RequireRole allowedRoles={['admin', 'owner']}>
+            <AdminLeadDetail />
+          </RequireRole>
+        }
+      />
+      <Route
         path="/owner"
         element={
           <RequireRole allowedRoles={['owner']}>
@@ -104,6 +113,14 @@ export default function App() {
         element={
           <RequireRole allowedRoles={['owner']}>
             <AddLead />
+          </RequireRole>
+        }
+      />
+      <Route
+        path="/owner/leads/:id"
+        element={
+          <RequireRole allowedRoles={['owner']}>
+            <AdminLeadDetail />
           </RequireRole>
         }
       />
