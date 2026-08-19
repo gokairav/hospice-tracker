@@ -45,19 +45,19 @@ export default function ReminderForm({ leadId, marketerId }) {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="w-full rounded-lg border border-slate-300 py-2.5 text-sm font-medium text-slate-700 active:bg-slate-50"
+          className="w-full rounded-lg border border-warm-300 py-2.5 text-sm font-medium text-warm-700 active:bg-warm-50"
         >
           Set follow-up reminder
         </button>
-        {success && <p className="mt-2 text-sm text-green-700 text-center">Reminder saved.</p>}
+        {success && <p className="mt-2 text-sm text-sage-600 text-center">Reminder saved.</p>}
       </div>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-3 space-y-3">
+    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-warm-200 p-3 space-y-3">
       <div>
-        <label htmlFor="reminderDate" className="block text-xs font-medium text-slate-500 mb-1">
+        <label htmlFor="reminderDate" className="block text-xs font-medium text-warm-500 mb-1">
           Reminder date
         </label>
         <input
@@ -65,11 +65,11 @@ export default function ReminderForm({ leadId, marketerId }) {
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+          className="w-full rounded-lg border border-warm-300 px-3 py-2.5 text-base text-warm-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
         />
       </div>
       <div>
-        <label htmlFor="reminderNote" className="block text-xs font-medium text-slate-500 mb-1">
+        <label htmlFor="reminderNote" className="block text-xs font-medium text-warm-500 mb-1">
           Note
         </label>
         <textarea
@@ -77,26 +77,26 @@ export default function ReminderForm({ leadId, marketerId }) {
           value={note}
           onChange={(e) => setNote(e.target.value)}
           rows={2}
-          className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+          className="w-full rounded-lg border border-warm-300 px-3 py-2.5 text-base text-warm-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
         />
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{error}</div>
+        <div className="rounded-lg bg-clay-50 border border-clay-100 px-3 py-2 text-sm text-clay-700">{error}</div>
       )}
 
       <div className="flex gap-2">
         <button
           type="button"
           onClick={() => setOpen(false)}
-          className="flex-1 rounded-lg border border-slate-300 py-2.5 text-sm font-medium text-slate-700 active:bg-slate-50"
+          className="flex-1 rounded-lg border border-warm-300 py-2.5 text-sm font-medium text-warm-700 active:bg-warm-50"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={saving}
-          className="flex-1 rounded-lg bg-slate-900 text-white text-sm font-medium py-2.5 disabled:opacity-60 active:bg-slate-800"
+          className="flex-1 rounded-lg bg-brand-600 text-white text-sm font-medium py-2.5 disabled:opacity-60 active:bg-brand-700"
         >
           {saving ? 'Saving…' : 'Save reminder'}
         </button>

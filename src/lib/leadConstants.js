@@ -46,6 +46,26 @@ export function isAdmittedThisMonth(lead) {
   return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
 }
 
+export function isAdmittedLastMonth(lead) {
+  if (lead.status !== 'admitted' || !lead.admitted_date) return false
+  const d = new Date(lead.admitted_date)
+  const now = new Date()
+  const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+  return d.getFullYear() === lastMonth.getFullYear() && d.getMonth() === lastMonth.getMonth()
+}
+
+export function isCreatedInLastDays(lead, days) {
+  const cutoff = new Date()
+  cutoff.setDate(cutoff.getDate() - days)
+  return new Date(lead.created_at) >= cutoff
+}
+
+export function getInitials(firstName, lastName) {
+  const a = (firstName || '').trim().charAt(0)
+  const b = (lastName || '').trim().charAt(0)
+  return (a + b).toUpperCase() || '?'
+}
+
 // Shared by the add-lead form and the in-place lead editor
 export function validateLeadCoreFields(form) {
   const errors = {}

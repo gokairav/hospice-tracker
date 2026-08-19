@@ -5,7 +5,7 @@ import { useAllLeadsData } from '../hooks/useAllLeadsData'
 import AdminOverview from './admin/AdminOverview'
 import Section from './admin/Section'
 import BreakdownList from '../components/BreakdownList'
-import MonthlyTrendChart from './admin/MonthlyTrendChart'
+import AdmitsTrendChart from './admin/AdmitsTrendChart'
 import { computeMarketerPerformance, getMonthlyAdmitsTrend } from '../lib/adminStats'
 import { BENEFIT_PERIODS } from '../lib/leadConstants'
 
@@ -14,23 +14,23 @@ export default function OwnerDashboard() {
   const { leads, profiles, loading, error } = useAllLeadsData()
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-10">
+    <div className="min-h-screen bg-warm-50 pb-10">
       <Header
         right={
-          <button onClick={signOut} className="text-sm font-medium text-slate-500 active:text-slate-700">
+          <button onClick={signOut} className="text-sm font-medium text-warm-500 active:text-warm-700">
             Sign out
           </button>
         }
       />
-      <div className="px-4 py-4">
+      <div className="px-4 py-4 lg:max-w-4xl lg:mx-auto">
         <div className="flex items-start justify-between gap-2 mb-4">
           <div>
-            <h1 className="text-lg font-semibold text-slate-900 mb-1">Hi, {profile?.full_name ?? 'there'}</h1>
-            <p className="text-sm text-slate-500">Owner dashboard</p>
+            <h1 className="font-heading text-lg font-extrabold text-warm-900 tracking-tight mb-1">Hi, {profile?.full_name ?? 'there'}</h1>
+            <p className="text-sm text-warm-500">Owner dashboard</p>
           </div>
           <Link
             to="/owner/leads/new"
-            className="shrink-0 rounded-lg bg-slate-900 text-white text-sm font-medium px-3 py-2 active:bg-slate-800"
+            className="shrink-0 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white text-sm font-bold px-3.5 py-2 shadow-sm shadow-brand-200 active:from-brand-600 active:to-brand-700"
           >
             + Add admit
           </Link>
@@ -38,31 +38,33 @@ export default function OwnerDashboard() {
 
         {loading ? (
           <div className="flex items-center justify-center py-24">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-slate-600" />
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-warm-200 border-t-brand-500" />
           </div>
         ) : error ? (
-          <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{error}</div>
+          <div className="rounded-lg bg-clay-50 border border-clay-100 px-3 py-2 text-sm text-clay-700">{error}</div>
         ) : (
           <>
             <AdminOverview leads={leads} profiles={profiles} />
 
-            <Section title="Marketer performance">
-              <MarketerPerformanceTable data={computeMarketerPerformance(leads, profiles)} />
-            </Section>
+            <div className="lg:grid lg:grid-cols-3 lg:gap-4">
+              <Section title="Marketer performance">
+                <MarketerPerformanceTable data={computeMarketerPerformance(leads, profiles)} />
+              </Section>
 
-            <Section title="Benefit period breakdown">
-              <BreakdownList
-                items={BENEFIT_PERIODS.map((bp) => ({
-                  label: bp,
-                  count: leads.filter((l) => l.benefit_period === bp).length,
-                })).filter((item) => item.count > 0)}
-                emptyLabel="No admitted patients yet."
-              />
-            </Section>
+              <Section title="Benefit period breakdown">
+                <BreakdownList
+                  items={BENEFIT_PERIODS.map((bp) => ({
+                    label: bp,
+                    count: leads.filter((l) => l.benefit_period === bp).length,
+                  })).filter((item) => item.count > 0)}
+                  emptyLabel="No admitted patients yet."
+                />
+              </Section>
 
-            <Section title="Admits trend (last 6 months)">
-              <MonthlyTrendChart data={getMonthlyAdmitsTrend(leads)} />
-            </Section>
+              <Section title="Admits trend (last 6 months)">
+                <AdmitsTrendChart data={getMonthlyAdmitsTrend(leads)} />
+              </Section>
+            </div>
           </>
         )}
       </div>
@@ -72,20 +74,33 @@ export default function OwnerDashboard() {
 
 function MarketerPerformanceTable({ data }) {
   if (data.length === 0) {
-    return <p className="text-sm text-slate-400">No marketers yet.</p>
+    return <p className="text-sm text-warm-400">No marketers yet.</p>
   }
 
   return (
-    <ul className="divide-y divide-slate-100">
-      {data.map((m) => (
-        <li key={m.id} className="py-2 first:pt-0 last:pb-0">
-          <p className="text-sm font-medium text-slate-900">{m.name}</p>
-          <p className="text-xs text-slate-500 mt-0.5">
-            {m.totalLeads} lead{m.totalLeads === 1 ? '' : 's'} · {m.admitsThisMonth} admit
-            {m.admitsThisMonth === 1 ? '' : 's'} this month · {m.conversionRate}% conversion
-          </p>
-        </li>
-      ))}
-    </ul>
+    <table className="w-full">
+      <thead>
+        <tr className="text-left">
+          <th className="text-[10px] font-bold uppercase tracking-wide text-warm-500 pb-2">Marketer</th>
+          <th className="text-[10px] font-bold uppercase tracking-wide text-warm-500 pb-2 text-right">Referrals</th>
+          <th className="text-[10px] font-bold uppercase tracking-wide text-warm-500 pb-2 text-right">Admits</th>
+          <th className="text-[10px] font-bold uppercase tracking-wide text-warm-500 pb-2 text-right">Conversion</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((m) => (
+          <tr key={m.id} className="border-t border-warm-100">
+            <td className="py-2 text-sm font-bold text-warm-900">{m.name}</td>
+            <td className="py-2 text-sm text-warm-700 text-right">{m.totalLeads}</td>
+            <td className="py-2 text-sm text-warm-700 text-right">{m.totalAdmits}</td>
+            <td className="py-2 text-right">
+              <span className="inline-block text-[11px] font-extrabold px-2 py-0.5 rounded-full bg-sage-100 text-sage-600">
+                {m.conversionRate}%
+              </span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   )
 }

@@ -62,21 +62,21 @@ export default function CallLogSection({ leadId, marketerId, logs, onLogAdded })
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="w-full rounded-lg border border-slate-300 py-2.5 text-sm font-medium text-slate-700 active:bg-slate-50"
+          className="w-full rounded-lg border border-warm-300 py-2.5 text-sm font-medium text-warm-700 active:bg-warm-50"
         >
           Log a call or visit
         </button>
       ) : (
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-slate-200 p-3 space-y-3">
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-warm-200 p-3 space-y-3">
           <div>
-            <label htmlFor="logType" className="block text-xs font-medium text-slate-500 mb-1">
+            <label htmlFor="logType" className="block text-xs font-medium text-warm-500 mb-1">
               Type
             </label>
             <select
               id="logType"
               value={logType}
               onChange={(e) => setLogType(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+              className="w-full rounded-lg border border-warm-300 px-3 py-2.5 text-base text-warm-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
             >
               {CALL_LOG_TYPES.map((t) => (
                 <option key={t.value} value={t.value}>
@@ -86,7 +86,7 @@ export default function CallLogSection({ leadId, marketerId, logs, onLogAdded })
             </select>
           </div>
           <div>
-            <label htmlFor="logNote" className="block text-xs font-medium text-slate-500 mb-1">
+            <label htmlFor="logNote" className="block text-xs font-medium text-warm-500 mb-1">
               Note
             </label>
             <textarea
@@ -94,26 +94,26 @@ export default function CallLogSection({ leadId, marketerId, logs, onLogAdded })
               value={note}
               onChange={(e) => setNote(e.target.value)}
               rows={2}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+              className="w-full rounded-lg border border-warm-300 px-3 py-2.5 text-base text-warm-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
             />
           </div>
 
           {error && (
-            <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{error}</div>
+            <div className="rounded-lg bg-clay-50 border border-clay-100 px-3 py-2 text-sm text-clay-700">{error}</div>
           )}
 
           <div className="flex gap-2">
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="flex-1 rounded-lg border border-slate-300 py-2.5 text-sm font-medium text-slate-700 active:bg-slate-50"
+              className="flex-1 rounded-lg border border-warm-300 py-2.5 text-sm font-medium text-warm-700 active:bg-warm-50"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 rounded-lg bg-slate-900 text-white text-sm font-medium py-2.5 disabled:opacity-60 active:bg-slate-800"
+              className="flex-1 rounded-lg bg-brand-600 text-white text-sm font-medium py-2.5 disabled:opacity-60 active:bg-brand-700"
             >
               {saving ? 'Saving…' : 'Save log'}
             </button>
@@ -122,18 +122,18 @@ export default function CallLogSection({ leadId, marketerId, logs, onLogAdded })
       )}
 
       <div className="mt-4">
-        <p className="text-xs font-medium text-slate-500 mb-2">Call & visit history</p>
+        <p className="text-xs font-medium text-warm-500 mb-2">Call & visit history</p>
         {logs.length === 0 ? (
-          <p className="text-sm text-slate-400">No calls or visits logged yet.</p>
+          <p className="text-sm text-warm-400">No calls or visits logged yet.</p>
         ) : (
           <ul className="space-y-2">
             {logs.map((log) => (
-              <li key={log.id} className="bg-white rounded-lg border border-slate-200 p-3">
+              <li key={log.id} className="bg-white rounded-lg border border-warm-200 p-3">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-medium text-slate-700">{logTypeLabel(log.log_type)}</span>
-                  <span className="text-xs text-slate-400">{formatLogDate(log.log_date)}</span>
+                  <span className="text-xs font-medium text-warm-700">{logTypeLabel(log.log_type)}</span>
+                  <span className="text-xs text-warm-400">{formatLogDate(log.log_date)}</span>
                 </div>
-                {log.note && <p className="text-sm text-slate-600 mt-1">{log.note}</p>}
+                {log.note && <p className="text-sm text-warm-600 mt-1">{log.note}</p>}
               </li>
             ))}
           </ul>

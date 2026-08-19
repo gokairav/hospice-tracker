@@ -41,14 +41,14 @@ export default function RequestReviewButton({ contactName, phone, className = ''
       <button
         type="button"
         onClick={handlePrimaryAction}
-        className="w-full flex items-center justify-center gap-2 rounded-lg bg-amber-500 text-white font-medium py-2.5 active:bg-amber-600"
+        className="w-full flex items-center justify-center gap-2 rounded-lg bg-gold-500 text-white font-medium py-2.5 active:bg-gold-600"
       >
         ⭐ Request a Google review
       </button>
       <button
         type="button"
         onClick={handleCopy}
-        className="w-full text-center text-xs text-slate-500 mt-2 active:text-slate-700"
+        className="w-full text-center text-xs text-warm-500 mt-2 active:text-warm-700"
       >
         {copied ? 'Copied to clipboard!' : 'Or copy the review link'}
       </button>

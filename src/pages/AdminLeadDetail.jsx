@@ -50,7 +50,7 @@ export default function AdminLeadDetail() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-24">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-slate-600" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-warm-200 border-t-brand-500" />
       </div>
     )
   }
@@ -58,27 +58,27 @@ export default function AdminLeadDetail() {
   if (error || !lead) {
     return (
       <div className="px-4 py-6">
-        <Link to={backPath} className="text-sm text-slate-500">
+        <Link to={backPath} className="text-sm text-warm-500">
           &larr; Back
         </Link>
-        <p className="mt-4 text-sm text-red-600">{error || 'Lead not found.'}</p>
+        <p className="mt-4 text-sm text-clay-700">{error || 'Lead not found.'}</p>
       </div>
     )
   }
 
   return (
     <div className="px-4 py-4 pb-10">
-      <Link to={backPath} className="text-sm text-slate-500">
+      <Link to={backPath} className="text-sm text-warm-500">
         &larr; Back
       </Link>
 
       <div className="mt-3 flex items-start justify-between gap-2">
         <div>
-          <h1 className="text-lg font-semibold text-slate-900">
+          <h1 className="font-heading text-lg font-extrabold text-warm-900 tracking-tight">
             {lead.patient_first_name} {lead.patient_last_name}
           </h1>
           {lead.patient_dob && (
-            <p className="text-sm text-slate-500">{calculateAge(lead.patient_dob)} years old</p>
+            <p className="text-sm text-warm-500">{calculateAge(lead.patient_dob)} years old</p>
           )}
         </div>
         <StatusBadge status={lead.status} />

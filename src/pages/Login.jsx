@@ -36,19 +36,19 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-slate-50 px-4">
+    <div className="min-h-screen w-full flex items-center justify-center bg-warm-50 px-4">
       <div className="w-full max-w-sm">
         <div className="flex justify-center mb-8">
           <img src={logo} alt="Expert Hospice CRM" className="w-[180px] h-auto" />
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-          <h1 className="text-lg font-semibold text-slate-900 mb-1">Sign in</h1>
-          <p className="text-sm text-slate-500 mb-6">Enter your credentials to access your dashboard.</p>
+        <div className="bg-white rounded-2xl shadow-sm border border-warm-200 p-6">
+          <h1 className="font-heading text-lg font-extrabold text-warm-900 mb-1">Sign in</h1>
+          <p className="text-sm text-warm-500 mb-6">Enter your credentials to access your dashboard.</p>
 
           <form onSubmit={handleSubmit} noValidate>
             <div className="mb-4">
-              <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="email" className="block text-sm font-medium text-warm-700 mb-1">
                 Email
               </label>
               <input
@@ -57,13 +57,13 @@ export default function Login() {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+                className="w-full rounded-lg border border-warm-200 px-3 py-2.5 text-base text-warm-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                 placeholder="you@example.com"
               />
             </div>
 
             <div className="mb-5">
-              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1">
+              <label htmlFor="password" className="block text-sm font-medium text-warm-700 mb-1">
                 Password
               </label>
               <input
@@ -72,13 +72,13 @@ export default function Login() {
                 autoComplete="current-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+                className="w-full rounded-lg border border-warm-200 px-3 py-2.5 text-base text-warm-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
                 placeholder="••••••••"
               />
             </div>
 
             {error && (
-              <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+              <div className="mb-4 rounded-lg bg-clay-100 border border-clay-100 px-3 py-2 text-sm text-clay-700">
                 {error}
               </div>
             )}
@@ -86,7 +86,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full flex items-center justify-center gap-2 rounded-lg bg-slate-900 text-white font-medium py-2.5 disabled:opacity-60 active:bg-slate-800"
+              className="w-full flex items-center justify-center gap-2 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white font-semibold py-2.5 shadow-sm shadow-brand-200 disabled:opacity-60 active:from-brand-600 active:to-brand-700"
             >
               {submitting && <Spinner />}
               {submitting ? 'Signing in…' : 'Sign in'}

@@ -120,7 +120,7 @@ export default function LeadCoreFieldsEditor({ lead, canReassign, onUpdated }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="mt-4 bg-white rounded-xl border border-slate-200 p-3 space-y-4">
+    <form onSubmit={handleSubmit} noValidate className="mt-4 bg-white rounded-xl border border-warm-200 p-3 space-y-4">
       {canReassign && (
         <SelectField
           label="Assigned to"
@@ -222,7 +222,7 @@ export default function LeadCoreFieldsEditor({ lead, canReassign, onUpdated }) {
       <TextAreaField label="Notes" optional value={form.notes} onChange={(v) => updateField('notes', v)} />
 
       {submitError && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+        <div className="rounded-lg bg-clay-50 border border-clay-100 px-3 py-2 text-sm text-clay-700">
           {submitError}
         </div>
       )}
@@ -231,13 +231,13 @@ export default function LeadCoreFieldsEditor({ lead, canReassign, onUpdated }) {
         <button
           type="submit"
           disabled={saving}
-          className="w-full rounded-lg bg-slate-900 text-white font-medium py-2.5 disabled:opacity-60 active:bg-slate-800"
+          className="w-full rounded-lg bg-brand-600 text-white font-medium py-2.5 disabled:opacity-60 active:bg-brand-700"
         >
           {saving ? 'Saving…' : 'Save changes'}
         </button>
       )}
 
-      {success && <p className="text-sm text-green-700 text-center">Saved.</p>}
+      {success && <p className="text-sm text-sage-600 text-center">Saved.</p>}
     </form>
   )
 }

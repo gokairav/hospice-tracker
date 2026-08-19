@@ -122,10 +122,10 @@ export default function AddLead() {
 
   return (
     <div className="px-4 py-4 pb-10">
-      <Link to={backPath} className="text-sm text-slate-500">
+      <Link to={backPath} className="text-sm text-warm-500">
         &larr; Back
       </Link>
-      <h1 className="text-lg font-semibold text-slate-900 mt-3 mb-4">Add lead</h1>
+      <h1 className="font-heading text-lg font-extrabold text-warm-900 tracking-tight mt-3 mb-4">Add lead</h1>
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
         {canAssign && (
@@ -235,7 +235,7 @@ export default function AddLead() {
         />
 
         {submitError && (
-          <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+          <div className="rounded-lg bg-clay-50 border border-clay-100 px-3 py-2 text-sm text-clay-700">
             {submitError}
           </div>
         )}
@@ -243,7 +243,7 @@ export default function AddLead() {
         <button
           type="submit"
           disabled={saving}
-          className="w-full rounded-lg bg-slate-900 text-white font-medium py-2.5 disabled:opacity-60 active:bg-slate-800"
+          className="w-full rounded-lg bg-brand-600 text-white font-medium py-2.5 disabled:opacity-60 active:bg-brand-700"
         >
           {saving ? 'Saving…' : 'Add lead'}
         </button>

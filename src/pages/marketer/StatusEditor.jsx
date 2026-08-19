@@ -71,15 +71,15 @@ export default function StatusEditor({ lead, rejectionReasons, onUpdated }) {
   }
 
   return (
-    <form onSubmit={handleSave} className="mt-4 bg-white rounded-xl border border-slate-200 p-3">
-      <label htmlFor="status" className="block text-xs font-medium text-slate-500 mb-1">
+    <form onSubmit={handleSave} className="mt-4 bg-white rounded-xl border border-warm-200 p-3">
+      <label htmlFor="status" className="block text-xs font-medium text-warm-500 mb-1">
         Status
       </label>
       <select
         id="status"
         value={status}
         onChange={(e) => setStatus(e.target.value)}
-        className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+        className="w-full rounded-lg border border-warm-300 px-3 py-2.5 text-base text-warm-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
       >
         {LEAD_STATUSES.map((s) => (
           <option key={s.value} value={s.value}>
@@ -91,14 +91,14 @@ export default function StatusEditor({ lead, rejectionReasons, onUpdated }) {
       {isDeclinedOrRejected && (
         <div className="mt-3 space-y-3">
           <div>
-            <label htmlFor="rejectionReason" className="block text-xs font-medium text-slate-500 mb-1">
+            <label htmlFor="rejectionReason" className="block text-xs font-medium text-warm-500 mb-1">
               Reason
             </label>
             <select
               id="rejectionReason"
               value={rejectionReason}
               onChange={(e) => setRejectionReason(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+              className="w-full rounded-lg border border-warm-300 px-3 py-2.5 text-base text-warm-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
             >
               <option value="">Select a reason…</option>
               {rejectionReasons.map((r) => (
@@ -109,7 +109,7 @@ export default function StatusEditor({ lead, rejectionReasons, onUpdated }) {
             </select>
           </div>
           <div>
-            <label htmlFor="rejectionNotes" className="block text-xs font-medium text-slate-500 mb-1">
+            <label htmlFor="rejectionNotes" className="block text-xs font-medium text-warm-500 mb-1">
               Notes
             </label>
             <textarea
@@ -117,7 +117,7 @@ export default function StatusEditor({ lead, rejectionReasons, onUpdated }) {
               value={rejectionNotes}
               onChange={(e) => setRejectionNotes(e.target.value)}
               rows={2}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+              className="w-full rounded-lg border border-warm-300 px-3 py-2.5 text-base text-warm-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -126,7 +126,7 @@ export default function StatusEditor({ lead, rejectionReasons, onUpdated }) {
       {isAdmitted && (
         <div className="mt-3 space-y-3">
           <div>
-            <label htmlFor="admittedDate" className="block text-xs font-medium text-slate-500 mb-1">
+            <label htmlFor="admittedDate" className="block text-xs font-medium text-warm-500 mb-1">
               Admission date
             </label>
             <input
@@ -134,18 +134,18 @@ export default function StatusEditor({ lead, rejectionReasons, onUpdated }) {
               type="date"
               value={admittedDate}
               onChange={(e) => setAdmittedDate(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+              className="w-full rounded-lg border border-warm-300 px-3 py-2.5 text-base text-warm-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
             />
           </div>
           <div>
-            <label htmlFor="benefitPeriod" className="block text-xs font-medium text-slate-500 mb-1">
+            <label htmlFor="benefitPeriod" className="block text-xs font-medium text-warm-500 mb-1">
               Benefit period
             </label>
             <select
               id="benefitPeriod"
               value={benefitPeriod}
               onChange={(e) => setBenefitPeriod(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent"
+              className="w-full rounded-lg border border-warm-300 px-3 py-2.5 text-base text-warm-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent"
             >
               <option value="">Select…</option>
               {BENEFIT_PERIODS.map((bp) => (
@@ -159,20 +159,20 @@ export default function StatusEditor({ lead, rejectionReasons, onUpdated }) {
       )}
 
       {error && (
-        <div className="mt-3 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{error}</div>
+        <div className="mt-3 rounded-lg bg-clay-50 border border-clay-100 px-3 py-2 text-sm text-clay-700">{error}</div>
       )}
 
       {isDirty && (
         <button
           type="submit"
           disabled={saving}
-          className="mt-3 w-full rounded-lg bg-slate-900 text-white font-medium py-2.5 disabled:opacity-60 active:bg-slate-800"
+          className="mt-3 w-full rounded-lg bg-brand-600 text-white font-medium py-2.5 disabled:opacity-60 active:bg-brand-700"
         >
           {saving ? 'Saving…' : 'Save status'}
         </button>
       )}
 
-      {success && <p className="mt-2 text-sm text-green-700 text-center">Status updated.</p>}
+      {success && <p className="mt-2 text-sm text-sage-600 text-center">Status updated.</p>}
     </form>
   )
 }

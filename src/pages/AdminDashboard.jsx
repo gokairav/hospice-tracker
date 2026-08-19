@@ -9,23 +9,23 @@ export default function AdminDashboard() {
   const { leads, profiles, loading, error } = useAllLeadsData()
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-10">
+    <div className="min-h-screen bg-warm-50 pb-10">
       <Header
         right={
-          <button onClick={signOut} className="text-sm font-medium text-slate-500 active:text-slate-700">
+          <button onClick={signOut} className="text-sm font-medium text-warm-500 active:text-warm-700">
             Sign out
           </button>
         }
       />
-      <div className="px-4 py-4">
+      <div className="px-4 py-4 lg:max-w-4xl lg:mx-auto">
         <div className="flex items-start justify-between gap-2 mb-4">
           <div>
-            <h1 className="text-lg font-semibold text-slate-900 mb-1">Hi, {profile?.full_name ?? 'there'}</h1>
-            <p className="text-sm text-slate-500">Admin dashboard</p>
+            <h1 className="font-heading text-lg font-extrabold text-warm-900 tracking-tight mb-1">Hi, {profile?.full_name ?? 'there'}</h1>
+            <p className="text-sm text-warm-500">Admin dashboard</p>
           </div>
           <Link
             to="/admin/leads/new"
-            className="shrink-0 rounded-lg bg-slate-900 text-white text-sm font-medium px-3 py-2 active:bg-slate-800"
+            className="shrink-0 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white text-sm font-bold px-3.5 py-2 shadow-sm shadow-brand-200 active:from-brand-600 active:to-brand-700"
           >
             + Add admit
           </Link>
@@ -33,10 +33,10 @@ export default function AdminDashboard() {
 
         {loading ? (
           <div className="flex items-center justify-center py-24">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-slate-600" />
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-warm-200 border-t-brand-500" />
           </div>
         ) : error ? (
-          <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{error}</div>
+          <div className="rounded-lg bg-clay-50 border border-clay-100 px-3 py-2 text-sm text-clay-700">{error}</div>
         ) : (
           <AdminOverview leads={leads} profiles={profiles} />
         )}

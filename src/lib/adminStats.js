@@ -22,7 +22,7 @@ export function computeMarketerPerformance(leads, profiles) {
       const admitsThisMonth = marketerLeads.filter(isAdmittedThisMonth).length
       const conversionRate = totalLeads > 0 ? Math.round((totalAdmits / totalLeads) * 100) : 0
 
-      return { id: m.id, name: m.full_name, totalLeads, admitsThisMonth, conversionRate }
+      return { id: m.id, name: m.full_name, totalLeads, totalAdmits, admitsThisMonth, conversionRate }
     })
     .sort((a, b) => b.totalLeads - a.totalLeads)
 }

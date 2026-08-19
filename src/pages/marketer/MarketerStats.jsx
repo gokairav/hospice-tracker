@@ -36,7 +36,7 @@ export default function MarketerStats() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-24">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-slate-600" />
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-warm-200 border-t-brand-500" />
       </div>
     )
   }
@@ -44,7 +44,7 @@ export default function MarketerStats() {
   if (error) {
     return (
       <div className="px-4 py-6">
-        <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">{error}</div>
+        <div className="rounded-lg bg-clay-50 border border-clay-100 px-3 py-2 text-sm text-clay-700">{error}</div>
       </div>
     )
   }
@@ -57,7 +57,7 @@ export default function MarketerStats() {
 
   return (
     <div className="px-4 py-4">
-      <h1 className="text-lg font-semibold text-slate-900 mb-4">My Stats</h1>
+      <h1 className="font-heading text-lg font-extrabold text-warm-900 tracking-tight mb-4">My Stats</h1>
 
       <div className="grid grid-cols-2 gap-3">
         <StatCard label="Total leads" value={total} />
@@ -66,9 +66,9 @@ export default function MarketerStats() {
         <StatCard label="Total admits" value={admittedTotal} />
       </div>
 
-      <div className="mt-3 bg-white rounded-xl border border-slate-200 p-4">
-        <p className="text-2xl font-semibold text-slate-900">{conversionRate}%</p>
-        <p className="text-xs text-slate-500 mt-0.5">Conversion rate (admits / total leads)</p>
+      <div className="mt-3 bg-white rounded-xl border border-warm-200 p-4">
+        <p className="text-2xl font-semibold text-warm-900">{conversionRate}%</p>
+        <p className="text-xs text-warm-500 mt-0.5">Conversion rate (admits / total leads)</p>
       </div>
     </div>
   )
