@@ -5,7 +5,7 @@ import Login from './pages/Login'
 import MarketerLayout from './pages/marketer/MarketerLayout'
 import MarketerLeads from './pages/marketer/MarketerLeads'
 import LeadDetail from './pages/marketer/LeadDetail'
-import AddLead from './pages/marketer/AddLead'
+import AddLead from './pages/AddLead'
 import FollowUps from './pages/marketer/FollowUps'
 import MarketerStats from './pages/marketer/MarketerStats'
 import Profile from './pages/marketer/Profile'
@@ -84,10 +84,26 @@ export default function App() {
         }
       />
       <Route
+        path="/admin/leads/new"
+        element={
+          <RequireRole allowedRoles={['admin', 'owner']}>
+            <AddLead />
+          </RequireRole>
+        }
+      />
+      <Route
         path="/owner"
         element={
           <RequireRole allowedRoles={['owner']}>
             <OwnerDashboard />
+          </RequireRole>
+        }
+      />
+      <Route
+        path="/owner/leads/new"
+        element={
+          <RequireRole allowedRoles={['owner']}>
+            <AddLead />
           </RequireRole>
         }
       />

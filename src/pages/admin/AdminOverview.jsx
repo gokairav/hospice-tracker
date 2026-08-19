@@ -55,7 +55,7 @@ export default function AdminOverview({ leads, profiles }) {
                       {lead.patient_first_name} {lead.patient_last_name}
                     </p>
                     <p className="text-xs text-slate-400 truncate mt-0.5">
-                      {profileNameById[lead.marketer_id] ?? 'Unknown marketer'}
+                      {lead.marketer_id ? (profileNameById[lead.marketer_id] ?? 'Unknown marketer') : 'Other'}
                     </p>
                   </div>
                   <StatusBadge status={lead.status} />

@@ -1,8 +1,8 @@
 import { useEffect, useId, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
-import { supabase } from '../../lib/supabaseClient'
-import { LOCATION_TYPES } from '../../lib/leadConstants'
+import { useAuth } from '../context/AuthContext'
+import { supabase } from '../lib/supabaseClient'
+import { LOCATION_TYPES } from '../lib/leadConstants'
 
 const initialForm = {
   patient_first_name: '',
@@ -20,11 +20,22 @@ const initialForm = {
   notes: '',
 }
 
+function dashboardPathForRole(role) {
+  if (role === 'owner') return '/owner'
+  if (role === 'admin') return '/admin'
+  return '/marketer'
+}
+
 export default function AddLead() {
-  const { user } = useAuth()
+  const { user, role } = useAuth()
   const navigate = useNavigate()
+  const canAssign = role === 'admin' || role === 'owner'
+  const backPath = dashboardPathForRole(role)
+
   const [form, setForm] = useState(initialForm)
   const [referralSourceTypes, setReferralSourceTypes] = useState([])
+  const [marketers, setMarketers] = useState([])
+  const [assignedTo, setAssignedTo] = useState('')
   const [errors, setErrors] = useState({})
   const [submitError, setSubmitError] = useState('')
   const [saving, setSaving] = useState(false)
@@ -41,12 +52,30 @@ export default function AddLead() {
     }
   }, [])
 
+  useEffect(() => {
+    if (!canAssign) return
+    let isMounted = true
+    async function load() {
+      const { data } = await supabase
+        .from('users_profiles')
+        .select('id, full_name')
+        .eq('role', 'marketer')
+        .order('full_name')
+      if (isMounted && data) setMarketers(data)
+    }
+    load()
+    return () => {
+      isMounted = false
+    }
+  }, [canAssign])
+
   function updateField(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
   function validate() {
     const newErrors = {}
+    if (canAssign && !assignedTo) newErrors.assignedTo = 'Please assign this lead to a marketer or Other.'
     if (!form.patient_first_name.trim()) newErrors.patient_first_name = 'First name is required.'
     if (!form.patient_last_name.trim()) newErrors.patient_last_name = 'Last name is required.'
     if (!form.patient_dob) newErrors.patient_dob = 'Date of birth is required.'
@@ -65,11 +94,13 @@ export default function AddLead() {
     setSubmitError('')
     if (!validate()) return
 
+    const marketerId = canAssign ? (assignedTo === 'other' ? null : assignedTo) : user.id
+
     setSaving(true)
     const { data, error } = await supabase
       .from('leads')
       .insert({
-        marketer_id: user.id,
+        marketer_id: marketerId,
         patient_first_name: form.patient_first_name.trim(),
         patient_last_name: form.patient_last_name.trim(),
         patient_dob: form.patient_dob,
@@ -94,17 +125,30 @@ export default function AddLead() {
       return
     }
 
-    navigate(`/marketer/leads/${data.id}`)
+    navigate(role === 'marketer' ? `/marketer/leads/${data.id}` : backPath)
   }
 
   return (
     <div className="px-4 py-4 pb-10">
-      <Link to="/marketer" className="text-sm text-slate-500">
-        &larr; Back to leads
+      <Link to={backPath} className="text-sm text-slate-500">
+        &larr; Back
       </Link>
       <h1 className="text-lg font-semibold text-slate-900 mt-3 mb-4">Add lead</h1>
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
+        {canAssign && (
+          <SelectField
+            label="Assign to"
+            value={assignedTo}
+            onChange={setAssignedTo}
+            error={errors.assignedTo}
+            options={[
+              ...marketers.map((m) => ({ value: m.id, label: m.full_name })),
+              { value: 'other', label: 'Other' },
+            ]}
+          />
+        )}
+
         <div className="grid grid-cols-2 gap-3">
           <TextField
             label="First name"

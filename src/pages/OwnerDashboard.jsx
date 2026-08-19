@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import Header from '../components/Header'
 import { useAllLeadsData } from '../hooks/useAllLeadsData'
@@ -22,8 +23,18 @@ export default function OwnerDashboard() {
         }
       />
       <div className="px-4 py-4">
-        <h1 className="text-lg font-semibold text-slate-900 mb-1">Hi, {profile?.full_name ?? 'there'}</h1>
-        <p className="text-sm text-slate-500 mb-4">Owner dashboard</p>
+        <div className="flex items-start justify-between gap-2 mb-4">
+          <div>
+            <h1 className="text-lg font-semibold text-slate-900 mb-1">Hi, {profile?.full_name ?? 'there'}</h1>
+            <p className="text-sm text-slate-500">Owner dashboard</p>
+          </div>
+          <Link
+            to="/owner/leads/new"
+            className="shrink-0 rounded-lg bg-slate-900 text-white text-sm font-medium px-3 py-2 active:bg-slate-800"
+          >
+            + Add admit
+          </Link>
+        </div>
 
         {loading ? (
           <div className="flex items-center justify-center py-24">
