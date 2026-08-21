@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabaseClient'
 import StatusBadge from '../components/StatusBadge'
@@ -10,12 +10,15 @@ import { calculateAge } from '../lib/leadConstants'
 export default function AdminLeadDetail() {
   const { id } = useParams()
   const { role } = useAuth()
+  const navigate = useNavigate()
   const backPath = role === 'owner' ? '/owner' : '/admin'
 
   const [lead, setLead] = useState(null)
   const [rejectionReasons, setRejectionReasons] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
 
   useEffect(() => {
     let isMounted = true
@@ -46,6 +49,26 @@ export default function AdminLeadDetail() {
       isMounted = false
     }
   }, [id])
+
+  async function handleDelete() {
+    if (!lead) return
+    const confirmed = window.confirm(
+      `Permanently delete ${lead.patient_first_name} ${lead.patient_last_name}? This also removes their follow-up reminders and call/visit history. This cannot be undone.`
+    )
+    if (!confirmed) return
+
+    setDeleteError('')
+    setDeleting(true)
+    const { error: deleteErr } = await supabase.from('leads').delete().eq('id', lead.id)
+    setDeleting(false)
+
+    if (deleteErr) {
+      setDeleteError(deleteErr.message)
+      return
+    }
+
+    navigate(backPath)
+  }
 
   if (loading) {
     return (
@@ -87,6 +110,24 @@ export default function AdminLeadDetail() {
       <LeadCoreFieldsEditor lead={lead} canReassign onUpdated={setLead} />
 
       <StatusEditor lead={lead} rejectionReasons={rejectionReasons} onUpdated={setLead} />
+
+      {role === 'owner' && (
+        <div className="mt-6 pt-4 border-t border-warm-200">
+          {deleteError && (
+            <div className="mb-3 rounded-lg bg-clay-50 border border-clay-100 px-3 py-2 text-sm text-clay-700">
+              {deleteError}
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={handleDelete}
+            disabled={deleting}
+            className="w-full rounded-lg border border-clay-100 text-clay-700 font-semibold py-2.5 disabled:opacity-60 active:bg-clay-50"
+          >
+            {deleting ? 'Deleting…' : 'Delete lead'}
+          </button>
+        </div>
+      )}
     </div>
   )
 }
