@@ -1,4 +1,5 @@
 import { useAuth } from '../../context/AuthContext'
+import ChangePasswordForm from '../../components/ChangePasswordForm'
 
 export default function Profile() {
   const { user, profile, signOut } = useAuth()
@@ -11,6 +12,10 @@ export default function Profile() {
         <Row label="Name" value={profile?.full_name} />
         <Row label="Email" value={user?.email} />
         <Row label="Role" value={profile?.role} />
+      </div>
+
+      <div className="mt-4">
+        <ChangePasswordForm />
       </div>
 
       <button

@@ -8,6 +8,7 @@ import BreakdownList from '../components/BreakdownList'
 import AdmitsTrendChart from './admin/AdmitsTrendChart'
 import { computeMarketerPerformance, getMonthlyAdmitsTrend } from '../lib/adminStats'
 import { BENEFIT_PERIODS } from '../lib/leadConstants'
+import { IconProfile } from '../components/icons'
 
 export default function OwnerDashboard() {
   const { profile, signOut } = useAuth()
@@ -17,9 +18,14 @@ export default function OwnerDashboard() {
     <div className="min-h-screen bg-warm-50 pb-10">
       <Header
         right={
-          <button onClick={signOut} className="text-sm font-medium text-warm-500 active:text-warm-700">
-            Sign out
-          </button>
+          <div className="flex items-center gap-3">
+            <Link to="/owner/profile" aria-label="Profile" className="text-warm-500 active:text-warm-700">
+              <IconProfile size={20} />
+            </Link>
+            <button onClick={signOut} className="text-sm font-medium text-warm-500 active:text-warm-700">
+              Sign out
+            </button>
+          </div>
         }
       />
       <div className="px-4 py-4 lg:max-w-4xl lg:mx-auto">

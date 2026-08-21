@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext'
 import Header from '../components/Header'
 import { useAllLeadsData } from '../hooks/useAllLeadsData'
 import AdminOverview from './admin/AdminOverview'
+import { IconProfile } from '../components/icons'
 
 export default function AdminDashboard() {
   const { profile, signOut } = useAuth()
@@ -12,9 +13,14 @@ export default function AdminDashboard() {
     <div className="min-h-screen bg-warm-50 pb-10">
       <Header
         right={
-          <button onClick={signOut} className="text-sm font-medium text-warm-500 active:text-warm-700">
-            Sign out
-          </button>
+          <div className="flex items-center gap-3">
+            <Link to="/admin/profile" aria-label="Profile" className="text-warm-500 active:text-warm-700">
+              <IconProfile size={20} />
+            </Link>
+            <button onClick={signOut} className="text-sm font-medium text-warm-500 active:text-warm-700">
+              Sign out
+            </button>
+          </div>
         }
       />
       <div className="px-4 py-4 lg:max-w-4xl lg:mx-auto">
