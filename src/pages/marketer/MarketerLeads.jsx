@@ -32,6 +32,7 @@ export default function MarketerLeads() {
   const [reminders, setReminders] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [showAllLeads, setShowAllLeads] = useState(false)
 
   useEffect(() => {
     if (!user) return
@@ -91,7 +92,10 @@ export default function MarketerLeads() {
   const dueTodayReminders = reminders.filter((r) => r.reminder_date === today)
   const priorities = [...overdueReminders, ...dueTodayReminders]
 
-  const activeLeadsCount = leads.filter((l) => ACTIVE_STATUSES.includes(l.status)).length
+  const activeLeads = leads.filter((l) => ACTIVE_STATUSES.includes(l.status))
+  const activeLeadsCount = activeLeads.length
+  const resolvedLeadsCount = leads.length - activeLeadsCount
+  const displayedLeads = showAllLeads ? leads : activeLeads
   const newThisWeek = leads.filter((l) => isCreatedInLastDays(l, 7)).length
 
   const admitsThisMonth = leads.filter(isAdmittedThisMonth).length
@@ -194,7 +198,18 @@ export default function MarketerLeads() {
 
       <div className="mt-5">
         <div className="flex items-baseline justify-between mb-2">
-          <span className="text-[11px] font-bold uppercase tracking-wide text-warm-500">Recent Leads</span>
+          <span className="text-[11px] font-bold uppercase tracking-wide text-warm-500">
+            {showAllLeads ? 'All Leads' : 'Active Leads'}
+          </span>
+          {resolvedLeadsCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowAllLeads((v) => !v)}
+              className="text-xs font-bold text-brand-600"
+            >
+              {showAllLeads ? 'Show active only' : `Show all (${leads.length})`}
+            </button>
+          )}
         </div>
         <div className="space-y-2.5">
           {leads.length === 0 && !error && (
@@ -203,7 +218,13 @@ export default function MarketerLeads() {
             </p>
           )}
 
-          {leads.map((lead) => (
+          {leads.length > 0 && displayedLeads.length === 0 && !error && (
+            <p className="text-sm text-warm-500 text-center py-10">
+              No active leads right now — {resolvedLeadsCount} resolved lead{resolvedLeadsCount === 1 ? '' : 's'} hidden.
+            </p>
+          )}
+
+          {displayedLeads.map((lead) => (
             <Link
               key={lead.id}
               to={`/marketer/leads/${lead.id}`}

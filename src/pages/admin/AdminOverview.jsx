@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import StatCard from '../../components/StatCard'
@@ -19,8 +20,12 @@ export default function AdminOverview({ leads, profiles }) {
   const { role } = useAuth()
   const leadPathPrefix = role === 'owner' ? '/owner' : '/admin'
   const profileNameById = Object.fromEntries(profiles.map((p) => [p.id, p.full_name]))
+  const [showAllLeads, setShowAllLeads] = useState(false)
 
-  const activeLeadsCount = leads.filter((l) => ACTIVE_STATUSES.includes(l.status)).length
+  const activeLeads = leads.filter((l) => ACTIVE_STATUSES.includes(l.status))
+  const activeLeadsCount = activeLeads.length
+  const resolvedLeadsCount = leads.length - activeLeadsCount
+  const displayedLeads = showAllLeads ? leads : activeLeads
   const newThisWeek = leads.filter((l) => isCreatedInLastDays(l, 7)).length
 
   const admitsThisMonth = leads.filter(isAdmittedThisMonth).length
@@ -66,12 +71,27 @@ export default function AdminOverview({ leads, profiles }) {
       </Section>
 
       <div className="mt-6">
-        <h2 className="text-sm font-semibold text-warm-700 mb-2">All leads</h2>
+        <div className="flex items-baseline justify-between mb-2">
+          <h2 className="text-sm font-semibold text-warm-700">{showAllLeads ? 'All leads' : 'Active leads'}</h2>
+          {resolvedLeadsCount > 0 && (
+            <button
+              type="button"
+              onClick={() => setShowAllLeads((v) => !v)}
+              className="text-xs font-bold text-brand-600"
+            >
+              {showAllLeads ? 'Show active only' : `Show all (${leads.length})`}
+            </button>
+          )}
+        </div>
         {leads.length === 0 ? (
           <p className="text-sm text-warm-400">No leads yet.</p>
+        ) : displayedLeads.length === 0 ? (
+          <p className="text-sm text-warm-400">
+            No active leads right now — {resolvedLeadsCount} resolved lead{resolvedLeadsCount === 1 ? '' : 's'} hidden.
+          </p>
         ) : (
           <div className="lg:grid lg:grid-cols-2 lg:gap-2.5 space-y-2 lg:space-y-0">
-            {leads.map((lead) => (
+            {displayedLeads.map((lead) => (
               <Link
                 key={lead.id}
                 to={`${leadPathPrefix}/leads/${lead.id}`}
