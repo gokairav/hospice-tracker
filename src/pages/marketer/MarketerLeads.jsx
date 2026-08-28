@@ -4,14 +4,13 @@ import { useAuth } from '../../context/AuthContext'
 import { supabase } from '../../lib/supabaseClient'
 import {
   ACTIVE_STATUSES,
-  calculateAge,
   isAdmittedThisMonth,
   isAdmittedLastMonth,
   isCreatedInLastDays,
 } from '../../lib/leadConstants'
 import StatCard from '../../components/StatCard'
-import StatusBadge from '../../components/StatusBadge'
-import Avatar from '../../components/Avatar'
+import LeadTimelineCard from '../../components/LeadTimelineCard'
+import ResolvedLeadsHistory from '../../components/ResolvedLeadsHistory'
 import { IconPeople, IconCheckBadge, IconBell, IconPhone, IconPlus } from '../../components/icons'
 
 const PIPELINE_STAGES = [
@@ -32,7 +31,6 @@ export default function MarketerLeads() {
   const [reminders, setReminders] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [showAllLeads, setShowAllLeads] = useState(false)
 
   useEffect(() => {
     if (!user) return
@@ -94,8 +92,7 @@ export default function MarketerLeads() {
 
   const activeLeads = leads.filter((l) => ACTIVE_STATUSES.includes(l.status))
   const activeLeadsCount = activeLeads.length
-  const resolvedLeadsCount = leads.length - activeLeadsCount
-  const displayedLeads = showAllLeads ? leads : activeLeads
+  const resolvedLeads = leads.filter((l) => !ACTIVE_STATUSES.includes(l.status))
   const newThisWeek = leads.filter((l) => isCreatedInLastDays(l, 7)).length
 
   const admitsThisMonth = leads.filter(isAdmittedThisMonth).length
@@ -198,18 +195,7 @@ export default function MarketerLeads() {
 
       <div className="mt-5">
         <div className="flex items-baseline justify-between mb-2">
-          <span className="text-[11px] font-bold uppercase tracking-wide text-warm-500">
-            {showAllLeads ? 'All Leads' : 'Active Leads'}
-          </span>
-          {resolvedLeadsCount > 0 && (
-            <button
-              type="button"
-              onClick={() => setShowAllLeads((v) => !v)}
-              className="text-xs font-bold text-brand-600"
-            >
-              {showAllLeads ? 'Show active only' : `Show all (${leads.length})`}
-            </button>
-          )}
+          <span className="text-[11px] font-bold uppercase tracking-wide text-warm-500">Active Leads</span>
         </div>
         <div className="space-y-2.5">
           {leads.length === 0 && !error && (
@@ -218,35 +204,29 @@ export default function MarketerLeads() {
             </p>
           )}
 
-          {leads.length > 0 && displayedLeads.length === 0 && !error && (
-            <p className="text-sm text-warm-500 text-center py-10">
-              No active leads right now — {resolvedLeadsCount} resolved lead{resolvedLeadsCount === 1 ? '' : 's'} hidden.
-            </p>
+          {leads.length > 0 && activeLeads.length === 0 && !error && (
+            <p className="text-sm text-warm-500 text-center py-10">No active leads right now.</p>
           )}
 
-          {displayedLeads.map((lead) => (
-            <Link
-              key={lead.id}
-              to={`/marketer/leads/${lead.id}`}
-              className="flex items-center gap-3 bg-white rounded-2xl border border-warm-200 shadow-sm shadow-warm-100 p-3 active:bg-warm-50"
-            >
-              <Avatar firstName={lead.patient_first_name} lastName={lead.patient_last_name} />
-              <div className="min-w-0 flex-1">
-                <p className="font-bold text-warm-900 truncate text-[13.5px]">
-                  {lead.patient_first_name} {lead.patient_last_name}
-                  {lead.patient_dob && (
-                    <span className="text-warm-400 font-medium"> · {calculateAge(lead.patient_dob)}y</span>
-                  )}
-                </p>
-                <p className="text-xs text-warm-500 truncate mt-0.5">
-                  {lead.primary_diagnosis || '—'} · {lead.location_name || '—'}
-                </p>
-              </div>
-              <StatusBadge status={lead.status} />
-            </Link>
+          {activeLeads.map((lead) => (
+            <LeadTimelineCard key={lead.id} lead={lead} to={`/marketer/leads/${lead.id}`} />
           ))}
         </div>
       </div>
+
+      {resolvedLeads.length > 0 && (
+        <div className="mt-5">
+          <div className="flex items-baseline justify-between mb-2">
+            <span className="text-[11px] font-bold uppercase tracking-wide text-warm-500">History</span>
+          </div>
+          <ResolvedLeadsHistory
+            leads={resolvedLeads}
+            renderCard={(lead) => (
+              <LeadTimelineCard key={lead.id} lead={lead} to={`/marketer/leads/${lead.id}`} />
+            )}
+          />
+        </div>
+      )}
 
       <div className="h-16" />
 
