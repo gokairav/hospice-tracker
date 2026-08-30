@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabaseClient'
-import { LOCATION_TYPES, validateLeadCoreFields } from '../lib/leadConstants'
-import { TextField, SelectField, TextAreaField } from '../components/FormFields'
+import { parseTypedDob, validateLeadCoreFields } from '../lib/leadConstants'
+import { TextField, SelectField } from '../components/FormFields'
+import LeadIntakeFields from '../components/LeadIntakeFields'
 
 const initialForm = {
   patient_first_name: '',
@@ -13,10 +14,10 @@ const initialForm = {
   secondary_diagnoses: '',
   location_name: '',
   location_type: '',
+  sameAsLocation: true,
   referral_source_name: '',
   referral_source_type: '',
   referring_contact_name: '',
-  referring_contact_phone: '',
   referral_date: new Date().toISOString().slice(0, 10),
   notes: '',
 }
@@ -34,24 +35,11 @@ export default function AddLead() {
   const backPath = dashboardPathForRole(role)
 
   const [form, setForm] = useState(initialForm)
-  const [referralSourceTypes, setReferralSourceTypes] = useState([])
   const [marketers, setMarketers] = useState([])
   const [assignedTo, setAssignedTo] = useState('')
   const [errors, setErrors] = useState({})
   const [submitError, setSubmitError] = useState('')
   const [saving, setSaving] = useState(false)
-
-  useEffect(() => {
-    let isMounted = true
-    async function load() {
-      const { data } = await supabase.from('referral_source_types').select('*').order('name')
-      if (isMounted && data) setReferralSourceTypes(data)
-    }
-    load()
-    return () => {
-      isMounted = false
-    }
-  }, [])
 
   useEffect(() => {
     if (!canAssign) return
@@ -87,6 +75,8 @@ export default function AddLead() {
     if (!validate()) return
 
     const marketerId = canAssign ? (assignedTo === 'other' ? null : assignedTo) : user.id
+    const referralName = form.sameAsLocation ? form.location_name.trim() : form.referral_source_name.trim()
+    const referralType = form.sameAsLocation ? form.location_type : form.referral_source_type
 
     setSaving(true)
     const { data, error } = await supabase
@@ -95,15 +85,14 @@ export default function AddLead() {
         marketer_id: marketerId,
         patient_first_name: form.patient_first_name.trim(),
         patient_last_name: form.patient_last_name.trim(),
-        patient_dob: form.patient_dob,
+        patient_dob: parseTypedDob(form.patient_dob),
         primary_diagnosis: form.primary_diagnosis.trim(),
         secondary_diagnoses: form.secondary_diagnoses.trim() || null,
         location_name: form.location_name.trim(),
         location_type: form.location_type,
-        referral_source_name: form.referral_source_name.trim(),
-        referral_source_type: form.referral_source_type,
+        referral_source_name: referralName,
+        referral_source_type: referralType,
         referring_contact_name: form.referring_contact_name.trim() || null,
-        referring_contact_phone: form.referring_contact_phone.trim() || null,
         referral_date: form.referral_date,
         status: 'new_lead',
         notes: form.notes.trim() || null,
@@ -156,83 +145,7 @@ export default function AddLead() {
           />
         </div>
 
-        <TextField
-          label="Date of birth"
-          type="date"
-          value={form.patient_dob}
-          onChange={(v) => updateField('patient_dob', v)}
-          error={errors.patient_dob}
-        />
-
-        <TextField
-          label="Primary diagnosis"
-          value={form.primary_diagnosis}
-          onChange={(v) => updateField('primary_diagnosis', v)}
-          error={errors.primary_diagnosis}
-        />
-        <TextField
-          label="Secondary diagnoses"
-          optional
-          value={form.secondary_diagnoses}
-          onChange={(v) => updateField('secondary_diagnoses', v)}
-        />
-
-        <TextField
-          label="Location name"
-          value={form.location_name}
-          onChange={(v) => updateField('location_name', v)}
-          error={errors.location_name}
-        />
-        <SelectField
-          label="Location type"
-          value={form.location_type}
-          onChange={(v) => updateField('location_type', v)}
-          error={errors.location_type}
-          options={LOCATION_TYPES.map((t) => ({ value: t, label: t }))}
-        />
-
-        <TextField
-          label="Referral source name"
-          value={form.referral_source_name}
-          onChange={(v) => updateField('referral_source_name', v)}
-          error={errors.referral_source_name}
-        />
-        <SelectField
-          label="Referral source type"
-          value={form.referral_source_type}
-          onChange={(v) => updateField('referral_source_type', v)}
-          error={errors.referral_source_type}
-          options={referralSourceTypes.map((t) => ({ value: t.name, label: t.name }))}
-        />
-
-        <TextField
-          label="Referring contact name"
-          optional
-          value={form.referring_contact_name}
-          onChange={(v) => updateField('referring_contact_name', v)}
-        />
-        <TextField
-          label="Referring contact phone"
-          optional
-          type="tel"
-          value={form.referring_contact_phone}
-          onChange={(v) => updateField('referring_contact_phone', v)}
-        />
-
-        <TextField
-          label="Referral date"
-          type="date"
-          value={form.referral_date}
-          onChange={(v) => updateField('referral_date', v)}
-          error={errors.referral_date}
-        />
-
-        <TextAreaField
-          label="Notes"
-          optional
-          value={form.notes}
-          onChange={(v) => updateField('notes', v)}
-        />
+        <LeadIntakeFields form={form} errors={errors} updateField={updateField} />
 
         {submitError && (
           <div className="rounded-lg bg-clay-50 border border-clay-100 px-3 py-2 text-sm text-clay-700">

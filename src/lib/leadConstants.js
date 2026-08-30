@@ -137,17 +137,51 @@ export function getInitials(firstName, lastName) {
   return (a + b).toUpperCase() || '?'
 }
 
+// Parses a typed date like "9/12/43" or "09/12/1943" into an ISO date
+// string, or null if it's empty or doesn't parse. Every patient here is an
+// adult, so a 2-digit year always resolves to 19XX rather than 20XX.
+export function parseTypedDob(input) {
+  const v = (input || '').trim()
+  if (!v) return null
+
+  const m = v.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})$/)
+  if (!m) return null
+
+  const mo = Number(m[1])
+  const day = Number(m[2])
+  let yr = Number(m[3])
+  if (yr < 100) yr += 1900
+  if (mo < 1 || mo > 12 || day < 1 || day > 31) return null
+
+  const d = new Date(yr, mo - 1, day)
+  if (d.getFullYear() !== yr || d.getMonth() !== mo - 1 || d.getDate() !== day) return null
+
+  return `${yr}-${String(mo).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+}
+
+// ISO date -> the typed format the DOB field displays, for pre-filling an
+// existing lead's date of birth into the editable text input.
+export function formatDobForInput(isoDate) {
+  if (!isoDate) return ''
+  const [yr, mo, day] = isoDate.split('-').map(Number)
+  return `${mo}/${day}/${yr}`
+}
+
 // Shared by the add-lead form and the in-place lead editor
 export function validateLeadCoreFields(form) {
   const errors = {}
   if (!form.patient_first_name.trim()) errors.patient_first_name = 'First name is required.'
   if (!form.patient_last_name.trim()) errors.patient_last_name = 'Last name is required.'
-  if (!form.patient_dob) errors.patient_dob = 'Date of birth is required.'
+  if (form.patient_dob.trim() && !parseTypedDob(form.patient_dob)) {
+    errors.patient_dob = "Doesn't look like a date — try 9/12/43."
+  }
   if (!form.primary_diagnosis.trim()) errors.primary_diagnosis = 'Primary diagnosis is required.'
   if (!form.location_name.trim()) errors.location_name = 'Location name is required.'
   if (!form.location_type) errors.location_type = 'Location type is required.'
-  if (!form.referral_source_name.trim()) errors.referral_source_name = 'Referral source name is required.'
-  if (!form.referral_source_type) errors.referral_source_type = 'Referral source type is required.'
+  if (!form.sameAsLocation) {
+    if (!form.referral_source_name.trim()) errors.referral_source_name = 'Referral source name is required.'
+    if (!form.referral_source_type) errors.referral_source_type = 'Referral source type is required.'
+  }
   if (!form.referral_date) errors.referral_date = 'Referral date is required.'
   return errors
 }
