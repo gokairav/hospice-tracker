@@ -43,7 +43,6 @@ export default function LeadIntakeFields({ form, errors, updateField }) {
         </label>
         <input
           type="text"
-          inputMode="numeric"
           placeholder="9/12/43"
           value={form.patient_dob}
           onChange={(e) => updateField('patient_dob', e.target.value)}
