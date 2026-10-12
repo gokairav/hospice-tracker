@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import { formatDobForInput, parseTypedDob, validateLeadCoreFields } from '../lib/leadConstants'
+import {
+  formatDobForInput,
+  parseTypedDob,
+  resolveReferralSourceType,
+  validateLeadCoreFields,
+} from '../lib/leadConstants'
 import { TextField, SelectField } from './FormFields'
 import LeadIntakeFields from './LeadIntakeFields'
 
@@ -32,6 +37,7 @@ export default function LeadCoreFieldsEditor({ lead, canReassign, onUpdated }) {
   const [form, setForm] = useState(() => fieldsFromLead(lead))
   const [assignedTo, setAssignedTo] = useState(lead.marketer_id ?? 'other')
   const [marketers, setMarketers] = useState([])
+  const [referralSourceTypes, setReferralSourceTypes] = useState([])
   const [errors, setErrors] = useState({})
   const [submitError, setSubmitError] = useState('')
   const [saving, setSaving] = useState(false)
@@ -76,6 +82,17 @@ export default function LeadCoreFieldsEditor({ lead, canReassign, onUpdated }) {
     setErrors(newErrors)
     if (Object.keys(newErrors).length > 0) return
 
+    let referralType = form.referral_source_type
+    if (form.sameAsLocation) {
+      referralType = resolveReferralSourceType(form.location_type, referralSourceTypes)
+      if (!referralType) {
+        setSubmitError(
+          `"${form.location_type}" isn't one of the referral source types on file, so it can't be used as the referral source automatically. Uncheck "Referral source is the same as location" above and pick the referral source type manually instead.`
+        )
+        return
+      }
+    }
+
     const updates = {
       patient_first_name: form.patient_first_name.trim(),
       patient_last_name: form.patient_last_name.trim(),
@@ -85,7 +102,7 @@ export default function LeadCoreFieldsEditor({ lead, canReassign, onUpdated }) {
       location_name: form.location_name.trim(),
       location_type: form.location_type,
       referral_source_name: form.sameAsLocation ? form.location_name.trim() : form.referral_source_name.trim(),
-      referral_source_type: form.sameAsLocation ? form.location_type : form.referral_source_type,
+      referral_source_type: referralType,
       referring_contact_name: form.referring_contact_name.trim() || null,
       referral_date: form.referral_date,
       notes: form.notes.trim() || null,
@@ -138,7 +155,12 @@ export default function LeadCoreFieldsEditor({ lead, canReassign, onUpdated }) {
         />
       </div>
 
-      <LeadIntakeFields form={form} errors={errors} updateField={updateField} />
+      <LeadIntakeFields
+        form={form}
+        errors={errors}
+        updateField={updateField}
+        onReferralSourceTypesLoaded={setReferralSourceTypes}
+      />
 
       {submitError && (
         <div className="rounded-lg bg-clay-50 border border-clay-100 px-3 py-2 text-sm text-clay-700">

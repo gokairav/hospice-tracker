@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabaseClient'
-import { parseTypedDob, validateLeadCoreFields } from '../lib/leadConstants'
+import { parseTypedDob, resolveReferralSourceType, validateLeadCoreFields } from '../lib/leadConstants'
 import { TextField, SelectField } from '../components/FormFields'
 import LeadIntakeFields from '../components/LeadIntakeFields'
 
@@ -36,6 +36,7 @@ export default function AddLead() {
 
   const [form, setForm] = useState(initialForm)
   const [marketers, setMarketers] = useState([])
+  const [referralSourceTypes, setReferralSourceTypes] = useState([])
   const [assignedTo, setAssignedTo] = useState('')
   const [errors, setErrors] = useState({})
   const [submitError, setSubmitError] = useState('')
@@ -76,7 +77,16 @@ export default function AddLead() {
 
     const marketerId = canAssign ? (assignedTo === 'other' ? null : assignedTo) : user.id
     const referralName = form.sameAsLocation ? form.location_name.trim() : form.referral_source_name.trim()
-    const referralType = form.sameAsLocation ? form.location_type : form.referral_source_type
+    let referralType = form.referral_source_type
+    if (form.sameAsLocation) {
+      referralType = resolveReferralSourceType(form.location_type, referralSourceTypes)
+      if (!referralType) {
+        setSubmitError(
+          `"${form.location_type}" isn't one of the referral source types on file, so it can't be used as the referral source automatically. Uncheck "Referral source is the same as location" above and pick the referral source type manually instead.`
+        )
+        return
+      }
+    }
 
     setSaving(true)
     const { data, error } = await supabase
@@ -145,7 +155,12 @@ export default function AddLead() {
           />
         </div>
 
-        <LeadIntakeFields form={form} errors={errors} updateField={updateField} />
+        <LeadIntakeFields
+          form={form}
+          errors={errors}
+          updateField={updateField}
+          onReferralSourceTypesLoaded={setReferralSourceTypes}
+        />
 
         {submitError && (
           <div className="rounded-lg bg-clay-50 border border-clay-100 px-3 py-2 text-sm text-clay-700">

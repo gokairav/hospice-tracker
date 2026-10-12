@@ -167,6 +167,22 @@ export function formatDobForInput(isoDate) {
   return `${mo}/${day}/${yr}`
 }
 
+// "Referral source is the same as location" reuses `location_type` (a fixed
+// client-side list: Home/ALF/Residential Care Home/SNF/Other) as
+// `referral_source_type` -- but that column is foreign-keyed to the
+// `referral_source_types` table, a separate, DB-driven list that isn't
+// guaranteed to contain the same names (e.g. "Home" isn't necessarily a row
+// there). Matching by name (case-insensitive) against the real list, rather
+// than assuming the two domains line up, is what keeps that mismatch from
+// reaching the database as a raw foreign-key violation. Returns the real
+// row's exact `name`, or null if the location type has no counterpart on
+// file yet.
+export function resolveReferralSourceType(locationType, referralSourceTypes) {
+  if (!locationType) return null
+  const match = referralSourceTypes.find((t) => t.name.toLowerCase() === locationType.toLowerCase())
+  return match ? match.name : null
+}
+
 // Shared by the add-lead form and the in-place lead editor
 export function validateLeadCoreFields(form) {
   const errors = {}

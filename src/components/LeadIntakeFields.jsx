@@ -19,20 +19,28 @@ function dobPreview(input) {
 // editor: everything from date of birth through notes. Expects a single
 // controlled `form` object (including a `sameAsLocation` boolean) plus
 // `errors` and `updateField(field, value)`, matching the pattern the rest
-// of these forms already use.
-export default function LeadIntakeFields({ form, errors, updateField }) {
+// of these forms already use. `onReferralSourceTypesLoaded` is optional --
+// it bubbles the fetched list up to the parent, which needs the real
+// DB-driven values (not just the dropdown it renders here) to safely
+// resolve "same as location" at submit time instead of trusting that
+// `location_type` and `referral_source_type` share the same domain.
+export default function LeadIntakeFields({ form, errors, updateField, onReferralSourceTypesLoaded }) {
   const [referralSourceTypes, setReferralSourceTypes] = useState([])
 
   useEffect(() => {
     let isMounted = true
     async function load() {
       const { data } = await supabase.from('referral_source_types').select('*').order('name')
-      if (isMounted && data) setReferralSourceTypes(data)
+      if (isMounted && data) {
+        setReferralSourceTypes(data)
+        onReferralSourceTypesLoaded?.(data)
+      }
     }
     load()
     return () => {
       isMounted = false
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
