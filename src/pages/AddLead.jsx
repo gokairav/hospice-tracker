@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabaseClient'
-import { parseTypedDob, validateLeadCoreFields } from '../lib/leadConstants'
+import { BENEFIT_PERIODS, parseTypedDob, validateLeadCoreFields } from '../lib/leadConstants'
 import { TextField, SelectField } from '../components/FormFields'
 import LeadIntakeFields from '../components/LeadIntakeFields'
 
@@ -20,6 +20,8 @@ const initialForm = {
   referring_contact_name: '',
   referral_date: new Date().toISOString().slice(0, 10),
   notes: '',
+  admitted_date: '',
+  benefit_period: '',
 }
 
 function dashboardPathForRole(role) {
@@ -62,17 +64,20 @@ export default function AddLead() {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
-  function validate() {
+  function validate(intendedStatus) {
     const newErrors = validateLeadCoreFields(form)
     if (canAssign && !assignedTo) newErrors.assignedTo = 'Please assign this lead to a marketer or Other.'
+    if (intendedStatus === 'admitted') {
+      if (!form.admitted_date) newErrors.admitted_date = 'Admission date is required.'
+      if (!form.benefit_period) newErrors.benefit_period = 'Benefit period is required.'
+    }
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault()
+  async function handleSubmit(intendedStatus) {
     setSubmitError('')
-    if (!validate()) return
+    if (!validate(intendedStatus)) return
 
     const marketerId = canAssign ? (assignedTo === 'other' ? null : assignedTo) : user.id
     const referralName = form.sameAsLocation ? form.location_name.trim() : form.referral_source_name.trim()
@@ -94,7 +99,9 @@ export default function AddLead() {
         referral_source_type: referralType,
         referring_contact_name: form.referring_contact_name.trim() || null,
         referral_date: form.referral_date,
-        status: 'new_lead',
+        status: intendedStatus,
+        admitted_date: intendedStatus === 'admitted' ? form.admitted_date : null,
+        benefit_period: intendedStatus === 'admitted' ? form.benefit_period : null,
         notes: form.notes.trim() || null,
       })
       .select()
@@ -116,7 +123,7 @@ export default function AddLead() {
       </Link>
       <h1 className="font-heading text-lg font-extrabold text-warm-900 tracking-tight mt-3 mb-4">Add lead</h1>
 
-      <form onSubmit={handleSubmit} noValidate className="space-y-4">
+      <form noValidate className="space-y-4">
         {canAssign && (
           <SelectField
             label="Assign to"
@@ -147,19 +154,51 @@ export default function AddLead() {
 
         <LeadIntakeFields form={form} errors={errors} updateField={updateField} />
 
+        <div className="rounded-lg border border-warm-200 p-3 space-y-3">
+          <div>
+            <p className="text-sm font-medium text-warm-700">Admission details</p>
+            <p className="text-xs text-warm-500 mt-0.5">Only needed if you're adding this patient directly as an admit.</p>
+          </div>
+          <TextField
+            label="Admission date"
+            type="date"
+            value={form.admitted_date}
+            onChange={(v) => updateField('admitted_date', v)}
+            error={errors.admitted_date}
+          />
+          <SelectField
+            label="Benefit period"
+            value={form.benefit_period}
+            onChange={(v) => updateField('benefit_period', v)}
+            error={errors.benefit_period}
+            options={BENEFIT_PERIODS.map((bp) => ({ value: bp, label: bp }))}
+          />
+        </div>
+
         {submitError && (
           <div className="rounded-lg bg-clay-50 border border-clay-100 px-3 py-2 text-sm text-clay-700">
             {submitError}
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={saving}
-          className="w-full rounded-lg bg-brand-600 text-white font-medium py-2.5 disabled:opacity-60 active:bg-brand-700"
-        >
-          {saving ? 'Saving…' : 'Add lead'}
-        </button>
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={() => handleSubmit('new_lead')}
+            disabled={saving}
+            className="flex-1 rounded-lg border border-brand-600 text-brand-600 font-medium py-2.5 disabled:opacity-60 active:bg-brand-50"
+          >
+            {saving ? 'Saving…' : 'Add as lead'}
+          </button>
+          <button
+            type="button"
+            onClick={() => handleSubmit('admitted')}
+            disabled={saving}
+            className="flex-1 rounded-lg bg-brand-600 text-white font-medium py-2.5 disabled:opacity-60 active:bg-brand-700"
+          >
+            {saving ? 'Saving…' : 'Add as admit'}
+          </button>
+        </div>
       </form>
     </div>
   )

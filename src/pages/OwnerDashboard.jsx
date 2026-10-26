@@ -38,7 +38,7 @@ export default function OwnerDashboard() {
             to="/owner/leads/new"
             className="shrink-0 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 text-white text-sm font-bold px-3.5 py-2 shadow-sm shadow-brand-200 active:from-brand-600 active:to-brand-700"
           >
-            + Add admit
+            + Add lead
           </Link>
         </div>
 
