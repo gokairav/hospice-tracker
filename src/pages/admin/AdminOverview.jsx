@@ -45,6 +45,10 @@ export default function AdminOverview({ leads, profiles }) {
     (l) => l.rejection_reason
   )
 
+  function jumpTo(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   return (
     <div>
       <div className="grid grid-cols-2 gap-3">
@@ -54,25 +58,42 @@ export default function AdminOverview({ leads, profiles }) {
           icon={IconPeople}
           tint="brand"
           delta={newThisWeek > 0 ? { direction: 'up', text: `+${newThisWeek} this week` } : undefined}
+          onClick={() => jumpTo('active-leads-section')}
         />
-        <StatCard label="Admits this month" value={admitsThisMonth} icon={IconCheckBadge} tint="sage" delta={admitsDelta} />
+        <StatCard
+          label="Admits this month"
+          value={admitsThisMonth}
+          icon={IconCheckBadge}
+          tint="sage"
+          delta={admitsDelta}
+          onClick={() => jumpTo('admissions-section')}
+        />
       </div>
 
-      <div className="lg:grid lg:grid-cols-2 lg:gap-4">
-        <Section title="Pipeline Overview">
-          <PipelineDonut leads={leads} />
-        </Section>
-
-        <Section title="Referral source breakdown">
-          <BreakdownList items={referralCounts} emptyLabel="No referral sources yet." />
-        </Section>
-      </div>
-
-      <Section title="Rejection reason breakdown">
-        <BreakdownList items={rejectionCounts} emptyLabel="No rejections logged yet." />
+      <Section title="Pipeline Overview">
+        <PipelineDonut leads={leads} />
       </Section>
 
-      <div className="mt-6">
+      {resolvedLeads.length > 0 && (
+        <div className="mt-6" id="admissions-section">
+          <h2 className="text-sm font-semibold text-warm-700 mb-2">History</h2>
+          <ResolvedLeadsHistory
+            leads={resolvedLeads}
+            listClassName={HISTORY_LIST_CLASSNAME}
+            renderCard={(lead) => (
+              <LeadTimelineCard
+                key={lead.id}
+                lead={lead}
+                to={`${leadPathPrefix}/leads/${lead.id}`}
+                marketerName={marketerNameFor(lead)}
+                showMarketer
+              />
+            )}
+          />
+        </div>
+      )}
+
+      <div className="mt-6" id="active-leads-section">
         <h2 className="text-sm font-semibold text-warm-700 mb-2">Active leads</h2>
         {leads.length === 0 ? (
           <p className="text-sm text-warm-400">No leads yet.</p>
@@ -93,24 +114,15 @@ export default function AdminOverview({ leads, profiles }) {
         )}
       </div>
 
-      {resolvedLeads.length > 0 && (
-        <div className="mt-6">
-          <h2 className="text-sm font-semibold text-warm-700 mb-2">History</h2>
-          <ResolvedLeadsHistory
-            leads={resolvedLeads}
-            listClassName={HISTORY_LIST_CLASSNAME}
-            renderCard={(lead) => (
-              <LeadTimelineCard
-                key={lead.id}
-                lead={lead}
-                to={`${leadPathPrefix}/leads/${lead.id}`}
-                marketerName={marketerNameFor(lead)}
-                showMarketer
-              />
-            )}
-          />
-        </div>
-      )}
+      <div className="lg:grid lg:grid-cols-2 lg:gap-4">
+        <Section title="Referral source breakdown" collapsible defaultOpen={false}>
+          <BreakdownList items={referralCounts} emptyLabel="No referral sources yet." />
+        </Section>
+
+        <Section title="Rejection reason breakdown" collapsible defaultOpen={false}>
+          <BreakdownList items={rejectionCounts} emptyLabel="No rejections logged yet." />
+        </Section>
+      </div>
     </div>
   )
 }

@@ -8,11 +8,17 @@ const TINTS = {
 }
 
 // delta: { direction: 'up' | 'down', text: string } | { text: string } for a neutral note
-export default function StatCard({ label, value, icon: Icon, tint = 'brand', delta }) {
+// onClick, when set, renders the card as a button that jumps to a related section
+export default function StatCard({ label, value, icon: Icon, tint = 'brand', delta, onClick }) {
   const t = TINTS[tint] ?? TINTS.brand
+  const Tag = onClick ? 'button' : 'div'
 
   return (
-    <div className={`rounded-2xl border px-3.5 py-3.5 min-w-0 ${t.card}`}>
+    <Tag
+      type={onClick ? 'button' : undefined}
+      onClick={onClick}
+      className={`rounded-2xl border px-3.5 py-3.5 min-w-0 text-left w-full ${onClick ? 'active:opacity-80' : ''} ${t.card}`}
+    >
       {Icon && (
         <div className={`w-7 h-7 rounded-lg flex items-center justify-center mb-2 ${t.icon}`}>
           <Icon size={15} strokeWidth={2.2} />
@@ -31,6 +37,6 @@ export default function StatCard({ label, value, icon: Icon, tint = 'brand', del
           {delta.text}
         </p>
       )}
-    </div>
+    </Tag>
   )
 }
